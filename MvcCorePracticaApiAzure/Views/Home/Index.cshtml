@@ -1,0 +1,33 @@
+﻿@model List<Serie> 
+@{ 
+    List<Personaje> personajes = ViewData["Personajes"] as List<Personaje>;
+}
+<div class="container row">
+    <!--SERIES-->
+    <div class="col-md-4">
+        <ul class="list-group">
+            @foreach (Serie serie in Model) {
+                <li class="list-group-item">
+                    <a class="text-dark" asp-action="Index" 
+                         asp-controller="Home" asp-route-idserie="@serie.IdSerie">@serie.Nombre</a>
+                </li>
+            }
+        </ul>
+    </div>
+    <!--PERSONAJES-->
+    <div class="col-md-8">
+        <div class="row">
+            @foreach (Personaje personaje in personajes) {
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <img src="@personaje.Imagen" class="card-img-top" 
+                             alt="@personaje.Nombre">
+                        <div class="card-body">
+                            <h5 class="card-title">@personaje.Nombre</h5>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
