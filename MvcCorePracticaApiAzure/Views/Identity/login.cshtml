@@ -1,0 +1,25 @@
+﻿
+@{
+    ViewData["Title"] = "login";
+}
+
+<div class="mx-auto w-50 mt-5">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="text-center">LOGIN</h2>
+            <form method="post">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">User</label>
+                    <input type="text" class="form-control" name="userName">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Password</label>
+                    <input type="password" class="form-control" name="password">
+                </div>
+                <button type="submit" class="btn btn-outline-dark w-100 mt-2">Submit</button>
+            </form>
+            <h4>@ViewData["MENSAJE"]</h4>
+        </div>
+    </div>
+</div>
+

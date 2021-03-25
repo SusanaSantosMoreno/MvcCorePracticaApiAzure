@@ -30,10 +30,14 @@
                     <a class="nav-link" asp-action="NuevoPersonaje" asp-controller="Home">Nuevo Personaje</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-action="ModificarPersonaje" 
+                    <a class="nav-link" asp-action="ModificarPersonaje"
                        asp-controller="Home">Modificar Personaje</a>
                 </li>
             </ul>
+            <div class="ml-auto">
+                <a class="text-white" asp-action="Login" asp-controller="Identity">Login</a>
+                <a class="text-white" asp-action="Logout" asp-controller="Identity">Logout</a>
+            </div>
         </div>
     </nav>
 

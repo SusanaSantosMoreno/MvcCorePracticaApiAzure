@@ -1,5 +1,8 @@
-﻿using MvcCore.Models;
+﻿using ApiPracticaAzure.Models;
+using MvcCore.Models;
+using MvcCorePracticaApiAzure.Filters;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +22,29 @@ namespace MvcCorePracticaApiAzure.Services {
             this.Header = new MediaTypeWithQualityHeaderValue("application/json");
         }
 
+        public async Task<String> GetToken(String userName, String password) {
+            using(HttpClient client = new HttpClient()) {
+                client.BaseAddress = this.UriApi;
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.Header);
+
+                UsuariosAzure usuario = new UsuariosAzure(0, "", "", userName, password);
+                String json = JsonConvert.SerializeObject(usuario);
+                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                String request = "Auth/Login";
+                HttpResponseMessage response = await client.PostAsync(request, content);
+
+                if (response.IsSuccessStatusCode) {
+                    String data = await response.Content.ReadAsStringAsync();
+                    JObject jobject = JObject.Parse(data);
+                    String token = jobject.GetValue("response").ToString();
+                    return token;
+                } else {
+                    return null;
+                }
+            }
+        }
+
         private async Task<T> CallApi<T> (String request) {
             using (HttpClient client = new HttpClient()) {
                 client.BaseAddress = this.UriApi;
@@ -33,6 +59,28 @@ namespace MvcCorePracticaApiAzure.Services {
                     return default(T);
                 }
             }
+        }
+
+        private async Task<T> CallApi<T> (String request, String token) {
+            using (HttpClient client = new HttpClient()) {
+                client.BaseAddress = this.UriApi;
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(this.Header);
+                client.DefaultRequestHeaders.Add("Authorization", "bearer " + token);
+                HttpResponseMessage response = await client.GetAsync(request);
+                if (response.IsSuccessStatusCode) {
+                    T data = await response.Content.ReadAsAsync<T>();
+                    return data;
+                } else {
+                    return default(T);
+                }
+            }
+        }
+
+        public async Task<UsuariosAzure> GetUsuario (String token) {
+            String request = "Auth/PerfilUsuario";
+            UsuariosAzure usuario = await this.CallApi<UsuariosAzure>(request, token);
+            return usuario;
         }
 
         public async Task<List<Serie>> GetSeriesAsync () {
@@ -79,6 +127,7 @@ namespace MvcCorePracticaApiAzure.Services {
             }
         }
 
+        
         public async Task CambiarPersonajeSerieAsync (int idPersonaje, int idSerie) {
             using (HttpClient client = new HttpClient()) {
                 String request = "api/CambiarPersonajeSerie/" + idPersonaje + "/" + idSerie;

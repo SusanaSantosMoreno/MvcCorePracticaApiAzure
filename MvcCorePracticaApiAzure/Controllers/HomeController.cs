@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MvcCore.Models;
+using MvcCorePracticaApiAzure.Filters;
 using MvcCorePracticaApiAzure.Services;
 
 namespace MvcCore.Controllers{
@@ -25,18 +26,21 @@ namespace MvcCore.Controllers{
             return View(series);
         }
 
+        [UsuarioAuthorize]
         public async Task<IActionResult> NuevoPersonaje () {
             List<Serie> series = await this.service.GetSeriesAsync();
             return View(series);
         }
 
         [HttpPost]
+        [UsuarioAuthorize]
         public async Task<IActionResult> NuevoPersonaje(int idPersonaje, string nombre, 
             string imagen, int idSerie) {
             await this.service.InsertarPersonajeAsync(idPersonaje, nombre, imagen, idSerie);
             return RedirectToAction("Index");
         }
 
+        [UsuarioAuthorize]
         public async Task<IActionResult> ModificarPersonaje () {
             List<Serie> series = await this.service.GetSeriesAsync();
             List<Personaje> personajes = await this.service.GetPersonajesAsync();
@@ -45,6 +49,7 @@ namespace MvcCore.Controllers{
         }
 
         [HttpPost]
+        [UsuarioAuthorize]
         public async Task<IActionResult> ModificarPersonaje (int idPersonaje, int idSerie) {
             await this.service.CambiarPersonajeSerieAsync(idPersonaje, idSerie);
             return RedirectToAction("Index");
